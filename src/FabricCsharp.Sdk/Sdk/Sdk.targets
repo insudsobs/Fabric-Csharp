@@ -1,0 +1,153 @@
+<Project>
+  <!-- FabricCsharp SDK — MSBuild targets for C# Fabric mod build pipeline -->
+
+  <!--
+    Build Pipeline:
+    1. BuildMetadata     — Extract [ModInfo] metadata
+    2. TranspileCSharp   — C# → Java source
+    3. GenerateResources — fabric.mod.json, mixin configs, assets
+    4. SetupGradle       — Generate build.gradle, settings.gradle, gradlew
+    5. GradleBuild       — Invoke gradlew build → JAR
+    6. CopyOutputJar     — Copy JAR to output directory
+  -->
+
+  <PropertyGroup>
+    <FabricTranspileDependsOn>
+      BuildMetadata;
+      TranspileCSharp;
+      GenerateResources;
+      SetupGradle
+    </FabricTranspileDependsOn>
+  </PropertyGroup>
+
+  <!-- ===== Step 1: Extract metadata from [ModInfo] ===== -->
+  <Target Name="BuildMetadata" BeforeTargets="TranspileCSharp">
+    <Message Importance="high"
+             Text="[FabricCsharp] Extracting mod metadata from [ModInfo] attribute..." />
+  </Target>
+
+  <!-- ===== Step 2: Transpile C# → Java ===== -->
+  <Target Name="TranspileCSharp"
+          DependsOnTargets="BuildMetadata"
+          BeforeTargets="CoreCompile">
+
+    <Message Importance="high"
+             Text="[FabricCsharp] Transpiling C# → Java sources..." />
+
+    <PropertyGroup>
+      <TranspileTaskAssembly>$(MSBuildThisFileDirectory)../tasks/FabricCsharp.Transpiler.dll</TranspileTaskAssembly>
+    </PropertyGroup>
+
+    <!-- Clean previous Java output -->
+    <RemoveDir Directories="$(FabricJavaOutputDir)"
+               Condition="Exists('$(FabricJavaOutputDir)')" />
+
+    <!-- Copy C# sources to a temp location for transpilation -->
+    <ItemGroup>
+      <_FabricCsharpSources Include="@(Compile)" Condition="'%(Extension)' == '.cs'" />
+    </ItemGroup>
+
+    <!-- Run the transpiler -->
+    <Exec
+      Command="dotnet &quot;$(TranspileTaskAssembly)&quot; transpile --sources @(_FabricCsharpSources, ' ') --output &quot;$(FabricJavaOutputDir)&quot; --mod-id &quot;$(ModId)&quot; --assets &quot;$(MSBuildProjectDirectory)/Assets&quot;"
+      WorkingDirectory="$(MSBuildProjectDirectory)"
+      ContinueOnError="false"
+      Condition="'@(_FabricCsharpSources)' != ''">
+      <Output TaskParameter="ExitCode" PropertyName="_TranspileExitCode" />
+    </Exec>
+
+    <Error
+      Condition="'$(_TranspileExitCode)' != '0'"
+      Text="[FabricCsharp] Transpilation failed. See error details above." />
+  </Target>
+
+  <!-- ===== Step 3: Generate resource files ===== -->
+  <Target Name="GenerateResources"
+          DependsOnTargets="TranspileCSharp"
+          BeforeTargets="SetupGradle">
+
+    <Message Importance="high"
+             Text="[FabricCsharp] Generating mod resources (fabric.mod.json, models, lang)..." />
+
+    <!-- Copy user assets (textures, sounds) -->
+    <ItemGroup>
+      <_FabricAssets Include="$(MSBuildProjectDirectory)/Assets/**/*"
+                     Condition="Exists('$(MSBuildProjectDirectory)/Assets')" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(_FabricAssets)"
+          DestinationFolder="$(FabricResourcesDir)/assets/$(ModId)/%(RecursiveDir)"
+          SkipUnchangedFiles="true"
+          Condition="'@(_FabricAssets)' != ''" />
+
+    <Message Importance="normal"
+             Text="[FabricCsharp] Generated resources in $(FabricResourcesDir)" />
+  </Target>
+
+  <!-- ===== Step 4: Setup Gradle build files ===== -->
+  <Target Name="SetupGradle"
+          DependsOnTargets="GenerateResources"
+          BeforeTargets="GradleBuild">
+
+    <Message Importance="high"
+             Text="[FabricCsharp] Setting up Gradle build system..." />
+
+    <!-- Generate build.gradle, settings.gradle, gradle.properties -->
+    <Exec
+      Command="dotnet &quot;$(TranspileTaskAssembly)&quot; gradle-init --project-dir &quot;$(FabricBuildDir)&quot; --mod-id &quot;$(ModId)&quot; --mc-version &quot;$(MinecraftVersion)&quot; --loader-version &quot;$(FabricLoaderVersion)&quot; --fabric-version &quot;$(FabricApiVersion)&quot; --mod-version &quot;$(Version)&quot;"
+      WorkingDirectory="$(MSBuildProjectDirectory)"
+      ContinueOnError="false" />
+  </Target>
+
+  <!-- ===== Step 5: Run Gradle build ===== -->
+  <Target Name="GradleBuild"
+          DependsOnTargets="SetupGradle"
+          BeforeTargets="CopyOutputJar">
+
+    <Message Importance="high"
+             Text="[FabricCsharp] Building Fabric mod JAR with Gradle..." />
+
+    <Exec
+      Command="dotnet &quot;$(TranspileTaskAssembly)&quot; gradle-build --project-dir &quot;$(FabricBuildDir)&quot; --java-home &quot;$(JavaHome)&quot;"
+      WorkingDirectory="$(MSBuildProjectDirectory)"
+      ContinueOnError="false"
+      EnvironmentVariables="JAVA_HOME=$(JavaHome)">
+      <Output TaskParameter="ExitCode" PropertyName="_GradleExitCode" />
+    </Exec>
+
+    <Error
+      Condition="'$(_GradleExitCode)' != '0'"
+      Text="[FabricCsharp] Gradle build failed. Check the build output for errors." />
+  </Target>
+
+  <!-- ===== Step 6: Copy output JAR ===== -->
+  <Target Name="CopyOutputJar"
+          DependsOnTargets="GradleBuild"
+          AfterTargets="Build">
+
+    <Message Importance="high"
+             Text="[FabricCsharp] Copying mod JAR to output directory..." />
+
+    <ItemGroup>
+      <_OutputJars Include="$(FabricBuildDir)/build/libs/*.jar"
+                   Exclude="$(FabricBuildDir)/build/libs/*-sources.jar;$(FabricBuildDir)/build/libs/*-dev.jar" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@_OutputJars"
+          DestinationFolder="$(OutputPath)"
+          Condition="'@(_OutputJars)' != ''" />
+
+    <Message Importance="high"
+             Text="[FabricCsharp] ✓ Mod JAR built successfully: @(_OutputJars->'%(Filename)%(Extension)')"
+             Condition="'@(_OutputJars)' != ''" />
+  </Target>
+
+  <!-- Clean: remove build directory -->
+  <Target Name="FabricClean" AfterTargets="Clean">
+    <RemoveDir Directories="$(FabricBuildDir)"
+               Condition="Exists('$(FabricBuildDir)')" />
+    <Message Importance="normal"
+             Text="[FabricCsharp] Cleaned build directory." />
+  </Target>
+
+</Project>

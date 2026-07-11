@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>FabricCsharp.CodeGen</RootNamespace>
+    <AssemblyName>FabricCsharp.CodeGen</AssemblyName>
+    <Description>Resource file generator for C# Fabric mods: fabric.mod.json, mixin configs, block states, models, lang files.</Description>
+    <PackageTags>minecraft fabric codegen csharp</PackageTags>
+    <PackageId>FabricCsharp.CodeGen</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FabricCsharp.Api\FabricCsharp.Api.csproj" />
+  </ItemGroup>
+
+</Project>

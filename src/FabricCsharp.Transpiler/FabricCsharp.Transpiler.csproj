@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>FabricCsharp.Transpiler</RootNamespace>
+    <AssemblyName>FabricCsharp.Transpiler</AssemblyName>
+    <Description>Roslyn-powered C# to Java source transpiler for Minecraft Fabric mods.</Description>
+    <PackageTags>minecraft fabric transpiler csharp java roslyn</PackageTags>
+    <PackageId>FabricCsharp.Transpiler</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FabricCsharp.Api\FabricCsharp.Api.csproj" />
+  </ItemGroup>
+
+</Project>

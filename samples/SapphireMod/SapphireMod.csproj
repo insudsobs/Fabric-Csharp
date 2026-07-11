@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <RootNamespace>SapphireMod</RootNamespace>
+    <AssemblyName>SapphireMod</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+
+    <!-- Mod metadata for FabricCsharp build pipeline -->
+    <ModId>sapphire-mod</ModId>
+    <MinecraftVersion>1.21.4</MinecraftVersion>
+    <FabricLoaderVersion>0.16.10</FabricLoaderVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FabricCsharp.Api\FabricCsharp.Api.csproj" />
+  </ItemGroup>
+
+</Project>

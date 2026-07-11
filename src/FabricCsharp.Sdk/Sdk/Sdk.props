@@ -1,0 +1,29 @@
+<Project>
+  <!-- FabricCsharp SDK — properties imported by consuming C# Fabric mod projects -->
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <LangVersion>13</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <OutputType>Library</OutputType>
+
+    <!-- Fabric version defaults — can be overridden in the consuming .csproj -->
+    <MinecraftVersion Condition="'$(MinecraftVersion)' == ''">1.21.4</MinecraftVersion>
+    <FabricLoaderVersion Condition="'$(FabricLoaderVersion)' == ''">0.16.10</FabricLoaderVersion>
+    <FabricApiVersion Condition="'$(FabricApiVersion)' == ''">0.114.3+1.21.5</FabricApiVersion>
+
+    <!-- Mod metadata — must be set in consuming .csproj -->
+    <ModId Condition="'$(ModId)' == ''">$(AssemblyName.ToLower())</ModId>
+
+    <!-- Java configuration -->
+    <JavaHome Condition="'$(JavaHome)' == '' AND '$(JAVA_HOME)' != ''">$(JAVA_HOME)</JavaHome>
+
+    <!-- Build output paths -->
+    <FabricBuildDir>$(MSBuildProjectDirectory)/build</FabricBuildDir>
+    <FabricJavaOutputDir>$(FabricBuildDir)/src/main/java</FabricJavaOutputDir>
+    <FabricResourcesDir>$(FabricBuildDir)/src/main/resources</FabricResourcesDir>
+
+    <!-- Disable default C# compilation output for mod projects -->
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+  </PropertyGroup>
+</Project>

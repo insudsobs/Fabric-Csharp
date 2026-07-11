@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <RootNamespace>FabricModTemplate</RootNamespace>
+    <AssemblyName>FabricModTemplate</AssemblyName>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+
+    <!-- Mod metadata -->
+    <ModId>fabric-mod-id</ModId>
+
+    <!-- Minecraft/Fabric versions -->
+    <MinecraftVersion>1.21.4</MinecraftVersion>
+    <FabricLoaderVersion>0.16.10</FabricLoaderVersion>
+    <FabricApiVersion>0.114.3+1.21.5</FabricApiVersion>
+
+    <!-- Java home (set to your JDK 21 path, or leave for auto-detection) -->
+    <!-- <JavaHome>/path/to/jdk-21</JavaHome> -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FabricCsharp.Sdk" Version="0.1.0-*" />
+    <PackageReference Include="FabricCsharp.Api" Version="0.1.0-*" />
+    <PackageReference Include="FabricCsharp.Analyzers" Version="0.1.0-*">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

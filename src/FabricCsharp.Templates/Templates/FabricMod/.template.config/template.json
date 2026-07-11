@@ -1,0 +1,45 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "FabricCsharp Contributors",
+  "classifications": ["Fabric", "Minecraft", "Mod", "C#"],
+  "identity": "FabricCsharp.Templates.FabricMod",
+  "name": "Fabric Mod (C#)",
+  "shortName": "fabric-mod",
+  "sourceName": "FabricModTemplate",
+  "description": "A C# project template for creating Minecraft Fabric mods using FabricCsharp.",
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "preferNameDirectory": true,
+  "symbols": {
+    "ModId": {
+      "type": "parameter",
+      "datatype": "string",
+      "replaces": "fabric-mod-id",
+      "description": "The unique mod identifier (lowercase, no spaces)",
+      "defaultValue": "my-mod"
+    },
+    "ModName": {
+      "type": "parameter",
+      "datatype": "string",
+      "replaces": "My Fabric Mod",
+      "description": "The human-readable mod name",
+      "defaultValue": "My Fabric Mod"
+    },
+    "Author": {
+      "type": "parameter",
+      "datatype": "string",
+      "replaces": "YourName",
+      "description": "The mod author's name",
+      "defaultValue": "Anonymous"
+    },
+    "McVersion": {
+      "type": "parameter",
+      "datatype": "string",
+      "replaces": "1.21.4",
+      "description": "Minecraft version to target",
+      "defaultValue": "1.21.4"
+    }
+  }
+}

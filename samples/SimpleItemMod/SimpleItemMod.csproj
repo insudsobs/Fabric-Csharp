@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Sample mod project — NOT part of the SDK build, just for reference -->
+    <RootNamespace>FabricCsharp.Samples.SimpleItemMod</RootNamespace>
+    <AssemblyName>SimpleItemMod</AssemblyName>
+    <IsPackable>false</IsPackable>
+    <OutputType>Library</OutputType>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\FabricCsharp.Api\FabricCsharp.Api.csproj" />
+  </ItemGroup>
+
+</Project>

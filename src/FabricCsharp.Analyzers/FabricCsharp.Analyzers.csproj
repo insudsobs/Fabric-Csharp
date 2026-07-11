@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>FabricCsharp.Analyzers</RootNamespace>
+    <AssemblyName>FabricCsharp.Analyzers</AssemblyName>
+    <Description>Roslyn analyzers and source generators for C# Fabric mod development. Detects unsupported C# features, validates API usage, and generates boilerplate registration code.</Description>
+    <PackageTags>minecraft fabric analyzer roslyn csharp sourcegenerator</PackageTags>
+    <PackageId>FabricCsharp.Analyzers</PackageId>
+
+    <!-- Analyzers are distributed as NuGet analyzer packages -->
+    <EnforceExtendedAnalyzerRules>false</EnforceExtendedAnalyzerRules>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+    <DevelopmentDependency>true</DevelopmentDependency>
+    <NoWarn>$(NoWarn);RS2008;RS1031</NoWarn>
+
+    <!-- Roslyn analyzers must target netstandard2.0 for IDE compatibility -->
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" PrivateAssets="all" />
+  </ItemGroup>
+
+  <!-- Pack analyzer as a NuGet analyzer -->
+  <ItemGroup>
+    <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+  </ItemGroup>
+
+</Project>

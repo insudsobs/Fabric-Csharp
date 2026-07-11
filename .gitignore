@@ -1,0 +1,12 @@
+.idea/
+build/
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.DotSettings.user
+.vs/
+.vscode/
+node_modules/

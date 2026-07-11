@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>FabricCsharp.Sdk</RootNamespace>
+    <AssemblyName>FabricCsharp.Sdk</AssemblyName>
+    <Description>MSBuild SDK package for building C# Fabric mods. Integrates transpilation, resource generation, and Gradle build into dotnet build.</Description>
+    <PackageTags>minecraft fabric sdk msbuild csharp modding</PackageTags>
+    <PackageId>FabricCsharp.Sdk</PackageId>
+
+    <!-- This is an MSBuild SDK package -->
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Build.Framework" Version="17.13.9" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.13.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FabricCsharp.Transpiler\FabricCsharp.Transpiler.csproj" />
+    <ProjectReference Include="..\FabricCsharp.CodeGen\FabricCsharp.CodeGen.csproj" />
+  </ItemGroup>
+
+  <!-- Pack Sdk props/targets -->
+  <ItemGroup>
+    <None Include="Sdk\Sdk.props" Pack="true" PackagePath="Sdk\Sdk.props" />
+    <None Include="Sdk\Sdk.targets" Pack="true" PackagePath="Sdk\Sdk.targets" />
+    <None Include="$(OutputPath)\FabricCsharp.Sdk.dll" Pack="true" PackagePath="tasks" Visible="false" />
+    <None Include="$(OutputPath)\FabricCsharp.Transpiler.dll" Pack="true" PackagePath="tasks" Visible="false" />
+    <None Include="$(OutputPath)\FabricCsharp.CodeGen.dll" Pack="true" PackagePath="tasks" Visible="false" />
+    <None Include="$(OutputPath)\FabricCsharp.Api.dll" Pack="true" PackagePath="tasks" Visible="false" />
+  </ItemGroup>
+
+</Project>

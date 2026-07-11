@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>FabricCsharp.Templates</RootNamespace>
+    <AssemblyName>FabricCsharp.Templates</AssemblyName>
+    <Description>dotnet new project templates for C# Fabric mod development.</Description>
+    <PackageTags>minecraft fabric template dotnet new csharp mod</PackageTags>
+    <PackageId>FabricCsharp.Templates</PackageId>
+    <PackageType>Template</PackageType>
+
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <IncludeContentInPack>true</IncludeContentInPack>
+    <NoDefaultExcludes>true</NoDefaultExcludes>
+
+    <!-- Template files are not compiled; they are content-only -->
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Content Include="Templates\**\*" Exclude="Templates\**\bin\**;Templates\**\obj\**" Pack="true" PackagePath="content" />
+  </ItemGroup>
+
+  <!-- Remove any .cs files from compilation (they're templates, not library code) -->
+  <ItemGroup>
+    <Compile Remove="Templates\**\*.cs" />
+  </ItemGroup>
+
+</Project>
