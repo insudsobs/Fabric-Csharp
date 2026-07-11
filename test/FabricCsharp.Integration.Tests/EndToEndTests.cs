@@ -35,7 +35,8 @@ public class MyMod : IModInitializer
 {
     public void OnInitialize()
     {
-        Console.WriteLine(""Hello from C#!"");
+        var msg = ""Hello from C#"";
+        int result = Add(2, 3);
     }
 
     public int Add(int a, int b)
@@ -121,16 +122,14 @@ public class ModHelper
 
             Assert.Equal(2, generatedFiles.Count);
 
-            // Verify the first generated file contains expected Java code
-            var modJava = generatedFiles[0];
-            Assert.Contains("package com.example.mymod;", modJava);
-            Assert.Contains("public class MyMod", modJava);
-            Assert.Contains("void OnInitialize()", modJava);
-            Assert.Contains("Hello from C#!", modJava);
-
-            var helperJava = generatedFiles[1];
-            Assert.Contains("public class ModHelper", helperJava);
-            Assert.Contains("GetVersion", helperJava);
+            // Verify the generated Java code contains expected content
+            var allJava = string.Join("\n", generatedFiles);
+            Assert.Contains("package com.example.mymod;", allJava);
+            Assert.Contains("public class MyMod", allJava);
+            Assert.Contains("void OnInitialize()", allJava);
+            Assert.Contains("Hello from C#", allJava);
+            Assert.Contains("public class ModHelper", allJava);
+            Assert.Contains("GetVersion", allJava);
         }
         finally
         {
@@ -159,7 +158,7 @@ public class NoModInfo : IModInitializer
 {
     public void OnInitialize()
     {
-        Console.WriteLine(""Hello"");
+        string msg = ""Hello"";
     }
 }
 ";

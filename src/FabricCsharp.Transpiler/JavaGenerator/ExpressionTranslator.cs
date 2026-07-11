@@ -86,24 +86,124 @@ public class ExpressionTranslator
             // Registries.Register<T>(key, factory) → Java registration code
             if (target == "Registries" && method == "Register")
             {
-                // Extract type argument
-                var typeArgs = invocation.DescendantNodes()
-                    .OfType<SimpleNameSyntax>()
-                    .FirstOrDefault(n => n.Identifier.Text is "Item" or "Block");
-
-                // For now, emit a simplified registration — this gets expanded by CodeGen
-                var regArgs = string.Join(", ", invocation.ArgumentList.Arguments
-                    .Select(a => Translate(a.Expression)));
-                return $"/* REGISTER: {typeArgs?.Identifier.Text ?? "?"} */ {regArgs}";
+                return TranslateRegisterCall(invocation);
             }
         }
 
-        // Standard method invocation translation
+            // Standard method invocation translation
         var methodName = TranslateMethodName(methodExpr);
         var args = string.Join(", ", invocation.ArgumentList.Arguments
             .Select(a => Translate(a.Expression)));
 
         return $"{methodName}({args})";
+    }
+
+    /// <summary>
+    /// Translates Registries.Register&lt;T&gt;(key, factory) → Items.register(key, Type::new, settings) for Items
+    /// or Blocks.register(key, Type::new, settings) for Blocks.
+    /// </summary>
+    private string TranslateRegisterCall(InvocationExpressionSyntax invocation)
+    {
+        var typeArg = ExtractRegisterTypeArg(invocation);
+        var regClass = typeArg == "Block" ? "Blocks" : "Items";
+        var args = invocation.ArgumentList.Arguments;
+
+        var keyExpr = Translate(args[0].Expression);
+
+        if (args.Count < 2)
+            return $"{regClass}.register({keyExpr})";
+
+        var factoryExpr = args[1].Expression;
+
+        if (factoryExpr is SimpleLambdaExpressionSyntax sl &&
+            sl.Body is ObjectCreationExpressionSyntax creation)
+        {
+            var className = creation.Type.ToString();
+            if (creation.ArgumentList is { Arguments.Count: > 0 })
+            {
+                var settingsArg = creation.ArgumentList.Arguments[0];
+                var settings = settingsArg.Expression is ObjectCreationExpressionSyntax settingsCreation
+                    ? TranslateSettingsObjectInit(settingsCreation)
+                    : Translate(settingsArg.Expression);
+                return $"{regClass}.register({keyExpr}, {className}::new, {settings})";
+            }
+            return $"{regClass}.register({keyExpr}, {className}::new)";
+        }
+
+        var factory = Translate(factoryExpr);
+        return $"{regClass}.register({keyExpr}, {factory})";
+    }
+
+    /// <summary>
+    /// Translates new Item.Settings { MaxCount = 64, Rarity = Rarity.Uncommon }
+    /// → new Item.Settings().maxCount(64).rarity(Rarity.UNCOMMON)
+    /// </summary>
+    private static string TranslateSettingsObjectInit(ObjectCreationExpressionSyntax creation)
+    {
+        var typeName = creation.Type.ToString();
+        var result = $"new {typeName}()";
+        if (creation.Initializer == null) return result;
+
+        foreach (var expr in creation.Initializer.Expressions)
+        {
+            if (expr is not AssignmentExpressionSyntax assignment) continue;
+            var prop = assignment.Left.ToString();
+            var value = assignment.Right.ToString();
+            var setter = char.ToLower(prop[0]) + prop[1..];
+            value = value switch
+            {
+                "Rarity.Common" => "Rarity.COMMON",
+                "Rarity.Uncommon" => "Rarity.UNCOMMON",
+                "Rarity.Rare" => "Rarity.RARE",
+                "Rarity.Epic" => "Rarity.EPIC",
+                _ => value
+            };
+            result += $".{setter}({value})";
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Extracts the generic type argument from Register&lt;Item&gt; or Register&lt;Block&gt;.
+    /// </summary>
+    private static string ExtractRegisterTypeArg(InvocationExpressionSyntax invocation)
+    {
+        // Method 1: Check explicit generic type argument on Register<T>
+        if (invocation.Expression is MemberAccessExpressionSyntax ma &&
+            ma.Name is GenericNameSyntax generic)
+        {
+            var typeName = generic.TypeArgumentList.Arguments.FirstOrDefault()?.ToString();
+            if (typeName is "Block" or "Item") return typeName;
+        }
+
+        // Method 2: Climb to VariableDeclarator to check declared type
+        var parent = invocation.Parent;
+        while (parent != null)
+        {
+            if (parent is EqualsValueClauseSyntax equals &&
+                equals.Parent is VariableDeclaratorSyntax { Parent: VariableDeclarationSyntax varDecl })
+            {
+                var declType = varDecl.Type.ToString();
+                if (declType is "Block" or "var") return "Block";
+                if (declType is "Item") return "Item";
+                break;
+            }
+            if (parent is VariableDeclaratorSyntax { Parent: VariableDeclarationSyntax varDecl2 })
+            {
+                var declType = varDecl2.Type.ToString();
+                if (declType is "Block") return "Block";
+                if (declType is "Item") return "Item";
+                break;
+            }
+            parent = parent.Parent;
+        }
+
+        // Method 3: Look for Block/Item hint in argument text
+        var argText = invocation.ArgumentList.ToString();
+        if (argText.Contains("<Block>") || argText.Contains("BlockKey") || argText.Contains("OreKey"))
+            return "Block";
+
+        return "Item";
     }
 
     private string TranslateMethodName(ExpressionSyntax expr)
