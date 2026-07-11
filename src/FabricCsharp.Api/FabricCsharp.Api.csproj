@@ -6,6 +6,7 @@
     <Description>C# API bindings for Minecraft Fabric modding. Provides stub types that map to Minecraft/Fabric Java classes at transpilation time.</Description>
     <PackageTags>minecraft fabric mod api csharp</PackageTags>
     <PackageId>FabricCsharp.Api</PackageId>
+    <NoWarn>$(NoWarn);CS8767;CS8766</NoWarn>
   </PropertyGroup>
 
 </Project>

@@ -1,0 +1,55 @@
+namespace FabricCsharp.Api;
+
+/// <summary>
+/// Enumeration of map colors for blocks displayed on maps.
+/// Maps to net.minecraft.block.MapColor in Minecraft.
+/// </summary>
+public enum MapColor
+{
+    Clear,
+    PaleGreen,
+    PaleYellow,
+    White,
+    BrightRed,
+    PalePurple,
+    IronGray,
+    DarkGreen,
+    WhiteGray,
+    Red,
+    Sand,
+    Dirt,
+    Stone,
+    Water,
+    Wood,
+    Quartz,
+    Orange,
+    Magenta,
+    LightBlue,
+    Yellow,
+    Lime,
+    Pink,
+    Gray,
+    LightGray,
+    Cyan,
+    Purple,
+    Blue,
+    Brown,
+    Green,
+    Black,
+    Gold,
+    Diamond,
+    Lapis,
+    Emerald,
+    Spruce,
+    Birch,
+    Jungle,
+    DarkOak,
+    Acacia,
+    Crimson,
+    Warped,
+    Deepslate,
+    RawIron,
+    Copper,
+    Amethyst,
+    Nether
+}

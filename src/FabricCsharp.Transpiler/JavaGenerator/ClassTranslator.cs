@@ -12,6 +12,7 @@ public class ClassTranslator
     private readonly TypeMapper _typeMapper;
     private readonly StatementTranslator _statementTranslator;
     private readonly ExpressionTranslator _expressionTranslator;
+    private readonly MixinTranslator? _mixinTranslator;
 
     public ClassTranslator(
         TypeMapper typeMapper,
@@ -21,10 +22,18 @@ public class ClassTranslator
         _typeMapper = typeMapper;
         _statementTranslator = statementTranslator;
         _expressionTranslator = expressionTranslator;
+        _mixinTranslator = new MixinTranslator(typeMapper, statementTranslator, expressionTranslator);
     }
 
     public void Translate(ClassDeclarationSyntax classDecl, SemanticModel semanticModel, JavaWriter writer)
     {
+        // If the class has [Mixin], delegate to MixinTranslator
+        if (HasMixinAttribute(classDecl))
+        {
+            _mixinTranslator!.Translate(classDecl, semanticModel, writer);
+            return;
+        }
+
         var syntaxTree = classDecl.SyntaxTree;
         var location = classDecl.GetLocation();
         var sourceLine = location.GetLineSpan().StartLinePosition.Line + 1;
@@ -248,5 +257,15 @@ public class ClassTranslator
     {
         var lastDot = javaType.LastIndexOf('.');
         return lastDot >= 0 ? javaType[(lastDot + 1)..] : javaType;
+    }
+
+    /// <summary>
+    /// Checks if the class has a [Mixin] or [MixinAttribute] attribute.
+    /// </summary>
+    private static bool HasMixinAttribute(ClassDeclarationSyntax classDecl)
+    {
+        return classDecl.AttributeLists
+            .SelectMany(al => al.Attributes)
+            .Any(a => a.Name.ToString() is "Mixin" or "MixinAttribute");
     }
 }

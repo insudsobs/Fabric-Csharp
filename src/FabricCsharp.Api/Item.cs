@@ -15,6 +15,10 @@ public abstract class Item
         public int MaxDamage { get; set; }
         public bool Fireproof { get; set; }
         public Rarity Rarity { get; set; } = Rarity.Common;
+        public FoodComponent? Food { get; set; }
+        public int Enchantability { get; set; }
+        public Item? RecipeRemainder { get; set; }
+        public EquipmentSlot EquipmentSlot { get; set; }
     }
 
     /// <summary>

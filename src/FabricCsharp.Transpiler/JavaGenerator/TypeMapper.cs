@@ -81,6 +81,17 @@ public class TypeMapper
         "FabricCsharp.Api.BlockEntity",
         "FabricCsharp.Api.Registries",
         "FabricCsharp.Api.Events",
+        "FabricCsharp.Api.FoodComponent",
+        "FabricCsharp.Api.EquipmentSlot",
+        "FabricCsharp.Api.StatusEffectInstance",
+        "FabricCsharp.Api.StatusEffect",
+        "FabricCsharp.Api.ToolMaterial",
+        "FabricCsharp.Api.SwordItem",
+        "FabricCsharp.Api.PickaxeItem",
+        "FabricCsharp.Api.AxeItem",
+        "FabricCsharp.Api.ShovelItem",
+        "FabricCsharp.Api.HoeItem",
+        "FabricCsharp.Api.MapColor",
     }.ToImmutableHashSet();
 
     /// <summary>
@@ -102,6 +113,20 @@ public class TypeMapper
         ["FabricCsharp.Api.BlockPos"] = "net.minecraft.util.math.BlockPos",
         ["FabricCsharp.Api.BlockState"] = "net.minecraft.block.BlockState",
         ["FabricCsharp.Api.BlockEntity"] = "net.minecraft.block.entity.BlockEntity",
+        ["FabricCsharp.Api.FoodComponent"] = "net.minecraft.component.type.FoodComponent",
+        ["FabricCsharp.Api.EquipmentSlot"] = "net.minecraft.entity.EquipmentSlot",
+        ["FabricCsharp.Api.StatusEffectInstance"] = "net.minecraft.entity.effect.StatusEffectInstance",
+        ["FabricCsharp.Api.StatusEffect"] = "net.minecraft.entity.effect.StatusEffect",
+        ["FabricCsharp.Api.ToolMaterial"] = "net.minecraft.item.ToolMaterial",
+        ["FabricCsharp.Api.SwordItem"] = "net.minecraft.item.SwordItem",
+        ["FabricCsharp.Api.PickaxeItem"] = "net.minecraft.item.PickaxeItem",
+        ["FabricCsharp.Api.AxeItem"] = "net.minecraft.item.AxeItem",
+        ["FabricCsharp.Api.ShovelItem"] = "net.minecraft.item.ShovelItem",
+        ["FabricCsharp.Api.HoeItem"] = "net.minecraft.item.HoeItem",
+        ["FabricCsharp.Api.MapColor"] = "net.minecraft.block.MapColor",
+        ["FabricCsharp.Api.CallbackInfo"] = "org.spongepowered.asm.mixin.injection.callback.CallbackInfo",
+        ["FabricCsharp.Api.CallbackInfoReturnable`1"] = "org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable",
+        ["FabricCsharp.Api.Direction"] = "net.minecraft.util.math.Direction",
     }.ToImmutableDictionary();
 
     /// <summary>

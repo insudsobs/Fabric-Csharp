@@ -15,6 +15,12 @@ public abstract class Block
         public float Resistance { get; set; } = 1.0f;
         public bool RequiresTool { get; set; }
         public SoundGroup? SoundGroup { get; set; }
+        public float Slipperiness { get; set; } = 0.6f;
+        public int Luminance { get; set; }
+        public bool ToolRequired { get; set; }
+        public MapColor MapColor { get; set; } = MapColor.Stone;
+        public bool TicksRandomly { get; set; }
+        public bool Collidable { get; set; } = true;
 
         public Settings HardnessAndResistance(float hardness, float resistance)
         {
